@@ -3,7 +3,7 @@ import Flight from '../../shared/models/FlightClass'
 // [Mock-Example]
 import axios from 'axios'
 
-// const catalogEndpoint = 'https://a5otqx8fob.execute-api.eu-west-1.amazonaws.com/Prod'
+const catalogEndpoint = 'https://qvk3gp2ruvgdppbxh2yqoqarki.appsync-api.us-west-2.amazonaws.com/graphql'
 
 /**
  *
@@ -66,43 +66,45 @@ export async function fetchFlights ({ commit, rootGetters }, { date, departure, 
     //   }
     // };
 
-    // const listFlightQuery = `query listFlights($filter: ModelFlightFilterInput) {
-    //   listFlights(filter: $filter) {
-    //         items {
-    //           id
-    //           departureDate
-    //           departureAirportCode
-    //           departureAirportName
-    //           departureCity
-    //           departureLocale
-    //           arrivalDate
-    //           arrivalAirportCode
-    //           arrivalAirportName
-    //           arrivalCity
-    //           arrivalLocale
-    //           ticketPrice
-    //           ticketCurrency
-    //           flightNumber
-    //           seatAllocation
-    //         }
-    //   }
-    // }`
+    const listFlightsQuery = `query listFlights($departureAirport: String!, $arrivalAirport: String!, $date: String!) {
+      listFlightCatalogs(departureAirport: $departureAirport, arrivalAirport: $arrivalAirport, Date: $date) {
+        items {
+          id
+          departureDate
+          departureAirportCode
+          departureAirportName
+          departureCity
+          departureLocale
+          arrivalDate
+          arrivalAirportCode
+          arrivalAirportName
+          arrivalCity
+          arrivalLocale
+          ticketPrice
+          ticketCurrency
+          flightNumber
+          seatAllocation
+        }
+      }
+    }`
 
-    // const result = await axios({
-    //   url: catalogEndpoint,
-    //   method: 'post',
-    //   data: {
-    //     query: listFlightsQuery,
-    //     variables: {
-    //       filter: flightFilter
-    //     }
-    //   },
-    //   headers: {
-    //     Authorization: credentials.accessToken,
-    //     'Content-Type': 'application/json'
-    //   }
-    // })
-
+    const result = await axios({
+      url: catalogEndpoint,
+      method: 'post',
+      data: {
+        query: listFlightsQuery,
+        variables: {
+          departureAirport : departure,
+          arrivalAirport: arrival,
+          date: date.replace('-','').replace('-','')
+        }
+      },
+      headers: {
+        'x-api-key': 'da2-f24jm5ffinemzcl5bcwdrdakxu',
+        'Content-Type': 'application/json'
+      }
+    })
+    console.log(result);
     // const {
     //   data: {
     //     data: { listFlights: flightData }
@@ -122,8 +124,9 @@ export async function fetchFlights ({ commit, rootGetters }, { date, departure, 
     // })
 
     // [Mock-Example]
-    const { data: flightData } = await axios.get('/mocks/flights.json')
+    //const { data: flightData } = await axios.get('/mocks/flights.json')
 
+    const flightData = result.data.data.listFlightCatalogs.items;
     // data mutations happen within a Flight class
     // here we convert graphQL results into an array of Flights
     // before comitting to Vuex State Management
