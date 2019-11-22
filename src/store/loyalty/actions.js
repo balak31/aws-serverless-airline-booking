@@ -1,7 +1,7 @@
 import Loyalty from '../../shared/models/LoyaltyClass'
 // @ts-ignore
 import { Loading } from 'quasar'
-
+import { Auth } from 'aws-amplify'
 import axios from 'axios'
 
 // const loyaltyEndpoint = 'https://489ibclmwd.execute-api.eu-west-1.amazonaws.com/Prod'
@@ -77,11 +77,9 @@ export async function fetchLoyalty ({ commit, rootState, rootGetters }) {
     //     Authorization: credentials.idToken
     //   }
     // })
-    const { data: loyaltyData } = await axios.get(loyaltyEndpoint + '/loyalty', {
-      params: {
-        cid: rootState.user
-      }
-    })
+    let user = await Auth.currentAuthenticatedUser()
+    const { data: loyaltyData } = await axios.get(loyaltyEndpoint + '/loyalty/'+ user.username)
+
     // [Mock-Example]
     // const { data: loyaltyData } = await axios.get('/mocks/loyalty.json')
 
