@@ -5,6 +5,7 @@ import { Loading } from 'quasar'
 import axios from 'axios'
 
 // const loyaltyEndpoint = 'https://489ibclmwd.execute-api.eu-west-1.amazonaws.com/Prod'
+const loyaltyEndpoint = 'https://1sctve4aba.execute-api.us-west-2.amazonaws.com/prod'
 
 /**
  * Loyalty [Vuex Module Action](https://vuex.vuejs.org/guide/actions.html) - fetchLoyalty retrieves current authenticated user loyalty info from Loyalty service.
@@ -76,9 +77,13 @@ export async function fetchLoyalty ({ commit, rootState, rootGetters }) {
     //     Authorization: credentials.idToken
     //   }
     // })
-
+    const { data: loyaltyData } = await axios.get(loyaltyEndpoint + '/loyalty', {
+      params: {
+        cid: rootState.user
+      }
+    })
     // [Mock-Example]
-    const { data: loyaltyData } = await axios.get('/mocks/loyalty.json')
+    // const { data: loyaltyData } = await axios.get('/mocks/loyalty.json')
 
     const loyalty = new Loyalty(loyaltyData)
 
